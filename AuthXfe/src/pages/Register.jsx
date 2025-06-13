@@ -1,29 +1,59 @@
 import { NavLink } from "react-router-dom"
 import logo from '../assets/logo.jpg'
+import axios from 'axios'
+import { useState } from 'react'
 
 function Register() {
+    const [data, setData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post("http://localhost:3000/register", data);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error registering:", error);
+        }
+    };
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
                 <img src={logo} alt="Logo" className="mb-6 mx-auto h-25 " />
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Register</h2>
-                <form className="flex flex-col gap-4">
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <input
                         type="text"
                         placeholder="Full Name"
+                        name="name"
                         required
+                        onChange={handleChange}
                         className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                         type="email"
                         placeholder="Email"
+                        name="email"
                         required
+                        onChange={handleChange}
                         className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                         type="password"
                         placeholder="Password"
+                        name="password"
                         required
+                        onChange={handleChange}
                         className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
