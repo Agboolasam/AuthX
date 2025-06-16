@@ -45,7 +45,7 @@ function Login() {
                 <p className="mt-4 text-center text-gray-600">
                     Dont have an account?{" "}
                     <NavLink to="/register" className="text-blue-600 hover:underline">
-                        Log in
+                        register
                     </NavLink>
                 </p>
             </div>
