@@ -2,10 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const User = require("./models/users"); //import user model
-const JWT = require("jsonwebtoken"); //import jsonwebtoken for token generation
-const bcrypt = require("bcryptjs");
-
+const authRoutes = require("./routes/auth"); //import auth routes
+const protectedRoute = require("./routes/protectedRoute"); //import protected route
 const app = express(); //initialize express server
 app.use(cors()); //use cors
 app.use(express.json());
@@ -22,19 +20,14 @@ mongoose
   })
   .catch((err) => console.log(err));
 
-app.post("/register", (req, res) => {
-  const user = new User({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  });
-  user
-    .save()
-    .then(() => {
-      res.status(201).json({ message: "User registered successfully" });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).json({ error: "Failed to register user" });
-    });
-});
+app.use("/auth", authRoutes); //use auth routes
+app.use("/api", protectedRoute); //use protected route
+
+/**To DO
+ * Implement login functionality
+ * Validate user credentials
+ * Generate and return JWT token
+ * encrypt data
+ * set up docker container for db properly
+ * Implement error handling
+ * **/
