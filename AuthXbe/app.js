@@ -8,7 +8,7 @@ const app = express(); //initialize express server
 app.use(cors()); //use cors
 app.use(express.json());
 
-const dbURL = process.env.DB_URL; //get database URL from .env file
+const dbURL = process.env.MONGO_URI; //get database URL from .env file
 
 mongoose
   .connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })

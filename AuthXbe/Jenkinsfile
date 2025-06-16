@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+    environment{
+        
+        JWT_ACCESS_TOKEN_SECRET = credentials('jwt-access-token-secret')
+        JWT_REFRESH_TOKEN_SECRET = credentials('jwt-refresh-token-secret')
+        SSH_PRIVATE_KEY = credentials('ssh-private-key')
+        APPVERSION = '1.0'
+        APP_NAME = 'authx-backend'
+        DOCKER_REPO = credentials('docker-repo')
+        VM_IP = credentials('vm-ip')
+        AZUSER= credentials('azure-user')
+        MONGO_ADMIN= credentials('mongo-admin')
+        MONGO_PASSWORD= credentials('mongo-password')
+    }
+    stages{
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+         stage('Build and Push Docker Image') {
+           
+            steps {
+                sh "docker build -t ${APP_NAME}:${APPVERSION} ."
+
+            }
+        }
+        stage('push Docker Image') {
+            steps {
+                sh "docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
+                sh "docker push ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
+            }
+        }
+        stage('Create .env File') {
+            steps {
+                writeFile file: '.env', text: """
+                JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
+                JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
+                MONGO_ADMIN=${MONGO_ADMIN}
+                MONGO_PASSWORD=${MONGO_PASSWORD}
+                APPVERSION=${APPVERSION}
+                APP_NAME=${APP_NAME}
+                DOCKER_REPO=${DOCKER_REPO}
+                """
+            }
+        }
+        stage('Copy Docker Compose File to VM') {
+            steps {
+                sshagent(['ssh-private-key']) {
+                    sh '''
+                         scp -o StrictHostKeyChecking=no docker-compose.yml .env ${AZUSER}@${VM_IP}:/home/${AZUSER}/app/
+                    '''
+                }
+            }
+        }
+       
+        stage('SSH into VM and Deploy with Docker-compose') {
+            steps {
+                sshagent(['ssh-private-key']) {
+                    sh '''
+                         ssh -o StrictHostKeyChecking=no ${AZUSER}@${VM_IP} "
+                         cd /home/${AZUSER}/app &&
+                         docker-compose up -d --build
+                    "
+                    '''
+                }
+                
+            }
+        }
+      
+        
+    }
+      post {
+            success {
+                echo 'Deployment successful!'
+              // TO-DO iimplement slack
+            }
+            failure {
+                echo 'Deployment failed!'
+                // TO-DO iimplement slack
+            }
+        }
+}

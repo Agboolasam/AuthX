@@ -1,0 +1,35 @@
+version: "2.36"
+services:
+  authx-backend:
+    image: ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URI: mongodb://${MONGO_ADMIN}:${MONGO_PASSWORD}@authx-db:27017/authx
+      JWT_ACCESS_TOKEN_SECRET: ${JWT_ACCESS_TOKEN_SECRET}
+      JWT_REFRESH_TOKEN_SECRET: ${JWT_REFRESH_TOKEN_SECRET}
+      DOCKER_REPO: ${DOCKER_REPO}
+    depends_on:
+      - authx-db
+  authx-db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - authx-db-data:/data/db
+  db-express:
+    image: mongo-express:latest
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ADMIN}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: authx-db
+    depends_on:
+      - authx-db
+volumes:
+  authx-db-data:
+    driver: local
