@@ -41,7 +41,6 @@ pipeline {
                 MONGO_PASSWORD=${MONGO_PASSWORD}
                 APPVERSION=${APPVERSION}
                 APP_NAME=${APP_NAME}
-                DOCKER_REPO=${DOCKER_REPO}
                 """
             }
         }
@@ -61,7 +60,7 @@ pipeline {
                     sh '''
                          ssh -o StrictHostKeyChecking=no ${AZUSER}@${VM_IP} "
                          cd /home/${AZUSER}/app &&
-                         docker-compose up -d --build
+                         docker-compose up -d 
                     "
                     '''
                 }
