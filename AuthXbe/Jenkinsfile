@@ -20,9 +20,10 @@ pipeline {
             }
         }
          stage('Build and Push Docker Image') {
+            
            
             steps {
-                sh "docker build -t ${APP_NAME}:${APPVERSION} ."
+                sh "docker build -t ${APP_NAME}:${APPVERSION} ./AuthXbe"
 
             }
         }
@@ -34,7 +35,7 @@ pipeline {
         }
         stage('Create .env File') {
             steps {
-                writeFile file: '.env', text: """
+                writeFile file:'.env', text: """
                 JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
                 JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
                 MONGO_ADMIN=${MONGO_ADMIN}
