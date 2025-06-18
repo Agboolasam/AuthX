@@ -7,7 +7,6 @@ const protectedRoute = require("./routes/protectedRoute"); //import protected ro
 const app = express(); //initialize express server
 app.use(cors()); //use cors
 app.use(express.json());
-
 const dbURL = process.env.MONGO_URI; //get database URL from .env file
 
 mongoose

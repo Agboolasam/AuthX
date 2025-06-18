@@ -12,6 +12,8 @@ pipeline {
         AZUSER= credentials('azure-user')
         MONGO_ADMIN= credentials('mongo-admin')
         MONGO_PASSWORD= credentials('mongo-password')
+        DOCKER_REPO_USR = credentials('docker-repo-usr')
+        DOCKER_REPO_PSW = credentials('docker-repo-psw')
     }
     stages{
         stage('Checkout') {
@@ -27,8 +29,9 @@ pipeline {
 
             }
         }
-        stage('push Docker Image') {
+        stage('login and push Docker Image') {
             steps {
+                sh "docker login ${DOCKER_REPO} -u ${DOCKER_REPO_USR} -p ${DOCKER_REPO_PSW}"
                 sh "docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
                 sh "docker push ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
             }
