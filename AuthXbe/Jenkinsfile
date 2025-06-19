@@ -67,8 +67,8 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no ${AZUSER}@${VM_IP} "
                                 cd /home/${AZUSER}/app &&
                                 echo '$DOCKER_PASS' | docker login -u '$DOCKER_USER' --password-stdin &&
-                                docker-compose pull &&
-                                docker-compose up -d &&
+                                docker compose pull &&
+                                docker compose up -d &&
                                 docker logout
                             "
                         '''
