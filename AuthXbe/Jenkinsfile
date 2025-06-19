@@ -40,13 +40,13 @@ pipeline {
             string(credentialsId: 'mongo-admin', variable: 'MONGO_ADMIN'),
             string(credentialsId: 'mongo-password', variable: 'MONGO_PASSWORD')
         ]) {
-            writeFile file: '.env', text: '''JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
+            writeFile file: '.env', text: """ JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
             JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
             MONGO_ADMIN=${MONGO_ADMIN}
             MONGO_PASSWORD=${MONGO_PASSWORD}
             APPVERSION=${APPVERSION}
             DOCKER_REPO=${DOCKER_REPO}
-            APP_NAME=${APP_NAME}'''
+            APP_NAME=${APP_NAME}"""
         }
     }
 }
