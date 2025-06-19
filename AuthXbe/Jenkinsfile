@@ -20,9 +20,8 @@ pipeline {
                 checkout scm
             }
         }
-         stage('Build and Push Docker Image') {
-            
-           
+        stage('Build and Push Docker Image') {
+        
             steps {
                 sh "docker build -t ${APP_NAME}:${APPVERSION} ./AuthXbe"
 
@@ -57,18 +56,17 @@ pipeline {
             steps {
                 sshagent(['ssh-private-key']) {
                     sh '''
-                         scp -o StrictHostKeyChecking=no docker-compose.yml .env ${AZUSER}@${VM_IP}:/home/${AZUSER}/app/
+                        scp -o StrictHostKeyChecking=no docker-compose.yml .env ${AZUSER}@${VM_IP}:/home/${AZUSER}/app/
                     '''
                 }
             }
-        }
-       
+        } 
         stage('SSH into VM and Deploy with Docker-compose') {
             steps {
                 sshagent(['ssh-private-key']) {
                     sh '''
-                         ssh -o StrictHostKeyChecking=no ${AZUSER}@${VM_IP} "
-                         cd /home/${AZUSER}/app &&
+                        ssh -o StrictHostKeyChecking=no ${AZUSER}@${VM_IP} "
+                        cd /home/${AZUSER}/app &&
                         docker-compose up -d 
                     "
                     '''
@@ -76,10 +74,8 @@ pipeline {
                 
             }
         }
-      
-        
     }
-      post {
+    post {
             success {
                 echo 'Deployment successful!'
               // TO-DO iimplement slack
