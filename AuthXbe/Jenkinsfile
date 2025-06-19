@@ -34,7 +34,7 @@ pipeline {
                     sh "docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
                     sh "docker push ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
             }
-        }
+        }}
         stage('Create .env File') {
             steps {
                 writeFile file:'.env', text: """
