@@ -1,9 +1,7 @@
-FROM node:alpine
+FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY routes/ ./routes/
-COPY models/ ./models/
-COPY *.js ./
+COPY . .
 EXPOSE 3000
-CMD ["node", "start"]
+CMD ["node", "app.js"]
