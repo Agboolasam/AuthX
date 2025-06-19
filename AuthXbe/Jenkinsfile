@@ -62,7 +62,7 @@ pipeline {
         stage('SSH into VM and Deploy with Docker-compose') {
             steps {
                 sshagent(['ssh-private-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh '''
                             ssh -o StrictHostKeyChecking=no ${AZUSER}@${VM_IP} "
                                 cd /home/${AZUSER}/app &&
