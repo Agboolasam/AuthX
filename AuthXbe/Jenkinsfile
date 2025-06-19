@@ -31,7 +31,8 @@ pipeline {
         }
         stage('login and push Docker Image') {
             steps {
-                sh "docker login ${DOCKER_REPO} -u ${DOCKER_REPO_USR} -p ${DOCKER_REPO_PSW}"
+                sh "echo ${DOCKER_REPO_PSW} | docker login ${DOCKER_REPO} --username ${DOCKER_REPO_USR} --password-stdin"
+                sh 'echo "Login successful"'
                 sh "docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
                 sh "docker push ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
             }
