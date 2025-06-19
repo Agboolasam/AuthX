@@ -51,11 +51,12 @@ pipeline {
         }
     }
 }
+        
         stage('Copy Docker Compose File to VM') {
             steps {
                 sshagent(['ssh-private-key']) {
                     sh '''
-                        scp -o StrictHostKeyChecking=no docker-compose.yml .env ${AZUSER}@${VM_IP}:/home/${AZUSER}/app/
+                        scp -o StrictHostKeyChecking=no ./AuthXbe/docker-compose.yml .env ${AZUSER}@${VM_IP}:/home/${AZUSER}/app/
                     '''
                 }
             }
