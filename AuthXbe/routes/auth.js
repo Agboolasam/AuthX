@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("./models/users"); //import user model
+const User = require("../models/users"); //import user model
 const JWT = require("jsonwebtoken"); //import jsonwebtoken for token generation
 const bcrypt = require("bcryptjs");
 const router = express.Router();
