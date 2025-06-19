@@ -12,8 +12,7 @@ pipeline {
         AZUSER= credentials('azure-user')
         MONGO_ADMIN= credentials('mongo-admin')
         MONGO_PASSWORD= credentials('mongo-password')
-        DOCKER_REPO_USR = credentials('docker-repo-usr')
-        DOCKER_REPO_PSW = credentials('docker-repo-psw')
+        
     }
     stages{
         stage('Checkout') {
@@ -31,10 +30,15 @@ pipeline {
         }
         stage('login and push Docker Image') {
             steps {
-                sh "echo ${DOCKER_REPO_PSW} | docker login ${DOCKER_REPO} --username ${DOCKER_REPO_USR} --password-stdin"
-                sh 'echo "Login successful"'
-                sh "docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
-                sh "docker push ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
+            withCredentials([usernamePassword(
+                credentialsId: 'docker-hub-credentials',
+                usernameVariable: 'DOCKER_USER',
+                passwordVariable: 'DOCKER_PASS'
+            )]) {
+                    sh 'echo $DOCKER_PASS | docker login $DOCKER_REPO --username $DOCKER_USER --password-stdin'
+                    sh 'echo "Login successful"'
+                    sh "docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
+                    sh "docker push ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}"
             }
         }
         stage('Create .env File') {
@@ -65,7 +69,7 @@ pipeline {
                     sh '''
                          ssh -o StrictHostKeyChecking=no ${AZUSER}@${VM_IP} "
                          cd /home/${AZUSER}/app &&
-                         docker-compose up -d 
+                        docker-compose up -d 
                     "
                     '''
                 }
