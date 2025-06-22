@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useState } from 'react'
 
 function Register() {
+    const [error, setError] = useState(null);
     const [data, setData] = useState({
         name: '',
         email: '',
@@ -24,6 +25,7 @@ function Register() {
             console.log(response.data);
         } catch (error) {
             console.error("Error registering:", error);
+            setError(error.response?.data?.error || "An error occurred while registering.");
         }
     };
     return (
@@ -31,6 +33,7 @@ function Register() {
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
                 <img src={logo} alt="Logo" className="mb-6 mx-auto h-25 " />
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Register</h2>
+                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <input
                         type="text"

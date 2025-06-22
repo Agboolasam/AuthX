@@ -1,8 +1,11 @@
 import { NavLink } from "react-router-dom"
+import React, { useState } from 'react'
 import logo from '../assets/logo.jpg'
 import axios from "axios"
 
+
 function Login() {
+    const [error, setError] = useState(null);
     const handleSubmit = async (e) => {
         e.preventDefault();
         const email = e.target.email.value;
@@ -13,6 +16,7 @@ function Login() {
             console.log(response.data);
         } catch (error) {
             console.error("Error logging in:", error);
+            setError(error.response?.data?.error || "An error occurred while logging in.");
         }
     };
 
@@ -21,7 +25,7 @@ function Login() {
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
                 <img src={logo} alt="Logo" className="mb-6 mx-auto h-25 " />
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
-
+                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <input
                         type="email"
