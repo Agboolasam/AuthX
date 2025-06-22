@@ -6,11 +6,21 @@ import axios from "axios"
 
 function Login() {
     const [error, setError] = useState(null);
+    const [data, setData] = useState({
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-
+        const { email, password } = data;
         try {
             const response = await axios.post("http://localhost:3000/login", { email, password });
             console.log(response.data);
@@ -29,12 +39,16 @@ function Login() {
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <input
                         type="email"
+                        name="email"
+                        onChange={handleChange}
                         placeholder="Email"
                         required
                         className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                         type="password"
+                        name="password"
+                        onChange={handleChange}
                         placeholder="Password"
                         required
                         className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
