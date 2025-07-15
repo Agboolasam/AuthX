@@ -22,24 +22,24 @@ pipeline {
             steps {
                 script {
                     def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    ${APPVERSION} = "${commitHash}"
-                    echo "Updated APPVERSION to ${APPVERSION}"
+                    echo "Commit hash: ${commitHash}"
+                    
                 }
             }
         }
-        stage('Build and Push Docker Image') {
+        stage('Build and tag Docker Image') {
         
             steps {
-                sh 'docker build -t ${APP_NAME}:${APPVERSION} ./AuthXbe'
-
+                sh 'docker build -t ${APP_NAME}:${commitHash} ./AuthXbe'
+                echo "built image with tag ${commitHash}"
             }
         }
         stage('login and push Docker Image') {
             steps { withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login https://index.docker.io/v1/ --username $DOCKER_USER --password-stdin'
                     sh 'echo "Login successful"'
-                    sh 'docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}'
-                    sh 'docker push ${DOCKER_REPO}/${APP_NAME}:${APPVERSION}'
+                    sh 'docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${commitHash}}'
+                    sh 'docker push ${DOCKER_REPO}/${APP_NAME}:${commitHash}'
             }
         }}
       stage('Create .env File') {
@@ -54,7 +54,7 @@ pipeline {
             JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
             MONGO_ADMIN=${MONGO_ADMIN}
             MONGO_PASSWORD=${MONGO_PASSWORD}
-            APPVERSION=${APPVERSION}
+            APPVERSION=${commitHash}
             DOCKER_REPO=${DOCKER_REPO}
             APP_NAME=${APP_NAME}"""
         }
