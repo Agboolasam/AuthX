@@ -22,8 +22,8 @@ pipeline {
             steps {
                 script {
                     def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    env.APPVERSION = "${env.APPVERSION}-${commitHash}"
-                    echo "Updated APPVERSION to ${env.APPVERSION}"
+                    ${APPVERSION} = "${commitHash}"
+                    echo "Updated APPVERSION to ${APPVERSION}"
                 }
             }
         }
