@@ -1,7 +1,9 @@
 import axios from "axios";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+const Port = import.meta.env.VITE_API_PORT;
 
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: `http://20.55.42.170:3000/api`,
 });
 api.interceptors.request.use(
   (config) => {
@@ -31,7 +33,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refreshToken");
         const response = await axios.post(
-          "http://localhost:3000/auth/refresh",
+          `http://20.55.42.170:3000/auth/refresh`,
           {
             refreshToken,
           }
@@ -47,7 +49,7 @@ api.interceptors.response.use(
         console.error("Refresh token failed:", err);
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/login"; // Redirect to login page
+        window.location.href = "/"; // Redirect to login page
       }
     }
   }
