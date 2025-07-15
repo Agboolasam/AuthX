@@ -2,14 +2,13 @@ pipeline {
     agent any
     environment{
         SSH_PRIVATE_KEY = credentials('ssh-private-key')
-        APPVERSION = ''
         APP_NAME = 'authx-backend'
         DOCKER_REPO = credentials('docker-repo')
         VM_IP = credentials('vm-ip')
         AZUSER= credentials('azure-user')
         MONGO_ADMIN= credentials('mongo-admin')
         MONGO_PASSWORD= credentials('mongo-password')
-        
+        COMMIT_HASH = ''
     }
     stages{
         stage('Checkout') {
@@ -21,25 +20,24 @@ pipeline {
         stage('Get commit hash') {
             steps {
                 script {
-                    def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    echo "Commit hash: ${commitHash}"
-                    
+                    env.COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    echo "Commit hash: ${env.COMMIT_HASH}"
                 }
             }
         }
         stage('Build and tag Docker Image') {
         
             steps {
-                sh 'docker build -t ${APP_NAME}:${commitHash} ./AuthXbe'
-                echo "built image with tag ${commitHash}"
+                sh 'docker build -t ${APP_NAME}:${COMMIT_HASH} ./AuthXbe'
+                echo "built image with tag ${COMMIT_HASH}"
             }
         }
         stage('login and push Docker Image') {
             steps { withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login https://index.docker.io/v1/ --username $DOCKER_USER --password-stdin'
                     sh 'echo "Login successful"'
-                    sh 'docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${commitHash}}'
-                    sh 'docker push ${DOCKER_REPO}/${APP_NAME}:${commitHash}'
+                    sh 'docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${COMMIT_HASH}'
+                    sh 'docker push ${DOCKER_REPO}/${APP_NAME}:${COMMIT_HASH}'
             }
         }}
       stage('Create .env File') {
@@ -54,7 +52,7 @@ pipeline {
             JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
             MONGO_ADMIN=${MONGO_ADMIN}
             MONGO_PASSWORD=${MONGO_PASSWORD}
-            APPVERSION=${commitHash}
+            APPVERSION=${COMMIT_HASH}
             DOCKER_REPO=${DOCKER_REPO}
             APP_NAME=${APP_NAME}"""
         }
