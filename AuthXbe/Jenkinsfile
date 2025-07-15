@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment{
         SSH_PRIVATE_KEY = credentials('ssh-private-key')
-        APPVERSION = '1.0'
+        APPVERSION = ''
         APP_NAME = 'authx-backend'
         DOCKER_REPO = credentials('docker-repo')
         VM_IP = credentials('vm-ip')
@@ -15,6 +15,16 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        
+        stage('Get commit hash') {
+            steps {
+                script {
+                    def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.APPVERSION = "${env.APPVERSION}-${commitHash}"
+                    echo "Updated APPVERSION to ${env.APPVERSION}"
+                }
             }
         }
         stage('Build and Push Docker Image') {

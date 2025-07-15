@@ -1,7 +1,7 @@
 import React from 'react'
-import api from '../api/api'
+import api from '../utils/api'
 
-async function dashboard() {
+async function Dashboard() {
     try {
         const response = await api.get('/dashboard');
         if (response.status !== 200) {
@@ -19,4 +19,4 @@ async function dashboard() {
     }
 }
 
-export default dashboard
+export default Dashboard;

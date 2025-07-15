@@ -2,6 +2,8 @@ import { NavLink } from "react-router-dom"
 import React, { useState } from 'react'
 import logo from '../assets/logo.jpg'
 import axios from "axios"
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+const Port = import.meta.env.VITE_API_PORT;
 
 
 function Login() {
@@ -22,8 +24,10 @@ function Login() {
         e.preventDefault();
         const { email, password } = data;
         try {
-            const response = await axios.post("http://localhost:3000/login", { email, password });
-            console.log(response.data);
+            const response = await axios.post(`http://20.55.42.170:3000/auth/login`, { email, password });
+            localStorage.setItem("token", response.data.accessToken);
+            localStorage.setItem("refreshToken", response.data.refreshToken);
+
         } catch (error) {
             console.error("Error logging in:", error);
             setError(error.response?.data?.error || "An error occurred while logging in.");

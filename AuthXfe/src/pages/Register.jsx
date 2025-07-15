@@ -2,6 +2,8 @@ import { NavLink } from "react-router-dom"
 import logo from '../assets/logo.jpg'
 import axios from 'axios'
 import { useState } from 'react'
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+const Port = import.meta.env.VITE_API_PORT;
 
 function Register() {
     const [error, setError] = useState(null);
@@ -21,8 +23,9 @@ function Register() {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:3000/register", data);
+            const response = await axios.post(`http://20.55.42.170:3000/auth/register`, data);
             console.log(response.data);
+            setError(data.message || "Registration successful!");
         } catch (error) {
             console.error("Error registering:", error);
             setError(error.response?.data?.error || "An error occurred while registering.");
