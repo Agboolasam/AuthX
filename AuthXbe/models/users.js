@@ -23,6 +23,15 @@ const userSchema = new Schema({
   refreshToken: {
     type: String,
   },
+  authId: {
+    type: String,
+    sparse: true,
+  },
+  authMethod: {
+    type: String,
+    enum: ["local", "google"],
+    default: "local",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
