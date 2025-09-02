@@ -48,7 +48,7 @@ function Login() {
         script.onload = () => {
             if (window.google) {
                 window.google.accounts.id.initialize({
-                    client_id: 'http://866082152282-sbdh5209qou8hqatns2ce37e35sjpb9d.apps.googleusercontent.com',
+                    client_id: '866082152282-sbdh5209qou8hqatns2ce37e35sjpb9d.apps.googleusercontent.com',
                     callback: handleGoogleResponse
                 });
             }
