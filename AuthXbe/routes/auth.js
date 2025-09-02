@@ -1,5 +1,5 @@
 import express from "express";
-import User from "../models/users";
+import User from "../models/users.js";
 import JWT from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { OAuth2Client } from "google-auth-library";
