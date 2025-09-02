@@ -118,6 +118,7 @@ function Login() {
                     />
                     <button
                         type="submit"
+                        onClick={handleSubmit}
                         className="bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
                     >
                         Sign In
