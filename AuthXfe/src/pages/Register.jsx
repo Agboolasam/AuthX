@@ -23,7 +23,7 @@ function Register() {
         e.preventDefault();
 
         try {
-            const response = await axios.post(`http://20.55.42.170:3000/auth/register`, data);
+            const response = await axios.post(`https://authx-ch2d.onrender.com/auth/register`, data);
             console.log(response.data);
             setError(data.message || "Registration successful!");
         } catch (error) {
