@@ -67,7 +67,9 @@ router.post("/register", async (req, res) => {
   if (user) {
     return res.status(400).json({ error: "User already exists" });
   }
-
+  if (!password) {
+    return res.status(40).json({ error: "password canot be empty" });
+  }
   if (!user) {
     try {
       // Hash the password
