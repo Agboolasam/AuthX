@@ -2,7 +2,64 @@ import express from "express";
 import User from "../models/users";
 import JWT from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { OAuth2Client } from "google-auth-library";
+import dotenv from "dotenv";
 const router = express.Router();
+dotenv.config();
+const client = new OAuth2Client(process.env.AUTH_ID);
+
+router.post("/google-signin", async (req, res) => {
+  try {
+    const userToken = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: userToken,
+      audience: process.env.AUTH_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name } = payload;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        authId: googleId,
+        authMethod: "google",
+      });
+
+      await user.save();
+    } else if (user.authMethod === "local") {
+      user.authId = googleId;
+      user.authMethod = "hybrid";
+
+      await user.save();
+    }
+
+    const accessToken = JWT.sign(
+      { id: user._id },
+      process.env.JWT_ACCESS_TOKEN_SECRET,
+      { expiresIn: "15m" }
+    );
+    const refreshToken = JWT.sign(
+      { id: user._id },
+      process.env.JWT_ACCESS_REFRESH_SECRET,
+      { expiresIn: "7d" }
+    );
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.status(200).json({
+      accessToken,
+      refreshToken,
+    });
+  } catch (error) {
+    console.error("Google auth error", error);
+    res.status(401).json({ error: "Issue encountered verifying your  user" });
+  }
+});
 
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
@@ -22,6 +79,7 @@ router.post("/register", async (req, res) => {
         name,
         email,
         password: hashedPassword,
+        authMethod: "local",
       });
 
       await newUser.save();

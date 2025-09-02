@@ -29,7 +29,7 @@ const userSchema = new Schema({
   },
   authMethod: {
     type: String,
-    enum: ["local", "google"],
+    enum: ["local", "google", "hybrid"],
     default: "local",
   },
   createdAt: {
