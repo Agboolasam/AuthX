@@ -57,7 +57,7 @@ router.post("/google-signin", async (req, res) => {
     });
   } catch (error) {
     console.log("Google auth error", error);
-    res.status(401).json({ error: "Issue encountered verifying your  user" });
+    res.status(500).json({ error: "Issue encountered verifying your  user" });
   }
 });
 
