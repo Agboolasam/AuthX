@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -23,6 +23,15 @@ const userSchema = new Schema({
   refreshToken: {
     type: String,
   },
+  authId: {
+    type: String,
+    sparse: true,
+  },
+  authMethod: {
+    type: String,
+    enum: ["local", "google", "hybrid"],
+    default: "local",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -30,4 +39,4 @@ const userSchema = new Schema({
 });
 
 const User = mongoose.model("User", userSchema);
-module.exports = User;
+export default User;

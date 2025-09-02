@@ -1,13 +1,15 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const authRoutes = require("./routes/auth"); //import auth routes
-const protectedRoute = require("./routes/protectedRoute"); //import protected route
-const app = express(); //initialize express server
-app.use(cors()); //use cors
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import authRoutes from "./routes/auth";
+import protectedRoute from "./routes/protectedRoute";
+
+dotenv.config();
+const app = express();
+app.use(cors());
 app.use(express.json());
-const dbURL = process.env.MONGO_URI; //get database URL from .env file
+const dbURL = process.env.MONGO_URI;
 
 mongoose
   .connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })

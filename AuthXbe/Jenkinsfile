@@ -8,7 +8,6 @@ pipeline {
         AZUSER= credentials('azure-user')
         MONGO_ADMIN= credentials('mongo-admin')
         MONGO_PASSWORD= credentials('mongo-password')
-        COMMIT_HASH = ''
     }
     stages{
         stage('Checkout') {
@@ -36,10 +35,12 @@ pipeline {
             steps { withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login https://index.docker.io/v1/ --username $DOCKER_USER --password-stdin'
                     sh 'echo "Login successful"'
-                    sh 'docker tag ${APP_NAME}:${APPVERSION} ${DOCKER_REPO}/${APP_NAME}:${COMMIT_HASH}'
+                    sh 'docker tag ${APP_NAME}:${COMMIT_HASH} ${DOCKER_REPO}/${APP_NAME}:${COMMIT_HASH}'
+                    echo "Tagged image as ${DOCKER_REPO}/${APP_NAME}:${COMMIT_HASH}"
                     sh 'docker push ${DOCKER_REPO}/${APP_NAME}:${COMMIT_HASH}'
             }
-        }}
+        }
+        }
       stage('Create .env File') {
     steps {
         withCredentials([

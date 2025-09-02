@@ -1,5 +1,4 @@
-const JWT = require("jsonwebtoken");
-
+import JWT from "jsonwebtoken";
 function verifyToken(req, res, next) {
   const header = req.headers["authorization"];
   if (!header || !header.startsWith("Bearer ")) {
@@ -14,4 +13,5 @@ function verifyToken(req, res, next) {
     next();
   });
 }
-module.exports = verifyToken;
+
+export default verifyToken;
