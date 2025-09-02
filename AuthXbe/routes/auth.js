@@ -10,7 +10,7 @@ const client = new OAuth2Client(process.env.AUTH_ID);
 
 router.post("/google-signin", async (req, res) => {
   try {
-    const userToken = req.body;
+    const userToken = req.body.token;
 
     const ticket = await client.verifyIdToken({
       idToken: userToken,
@@ -68,7 +68,7 @@ router.post("/register", async (req, res) => {
     return res.status(400).json({ error: "User already exists" });
   }
   if (!password) {
-    return res.status(40).json({ error: "password canot be empty" });
+    return res.status(400).json({ error: "password canot be empty" });
   }
   if (!user) {
     try {
