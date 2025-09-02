@@ -44,7 +44,7 @@ router.post("/google-signin", async (req, res) => {
     );
     const refreshToken = JWT.sign(
       { id: user._id },
-      process.env.JWT_ACCESS_REFRESH_SECRET,
+      process.env.JWT_REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
     user.accessToken = accessToken;
@@ -56,7 +56,7 @@ router.post("/google-signin", async (req, res) => {
       refreshToken,
     });
   } catch (error) {
-    console.error("Google auth error", error);
+    console.log("Google auth error", error);
     res.status(401).json({ error: "Issue encountered verifying your  user" });
   }
 });
